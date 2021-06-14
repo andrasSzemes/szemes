@@ -50,11 +50,32 @@ function textParser(text) {
         if (it.trim().substring(0, 2) === '• ') {
             return (<Text key={ix} style={{ paddingLeft: `${startSpaces.length * 7.2}px`, display: 'flex' }}>
                 <div style={{ minWidth: '14.4px' }}>•</div>
-                <div>{it.trim().substring(2)}</div>
+                <div>{formatText(it.trim().substring(2))}</div>
             </Text>)
         }
-        return <Text key={ix} style={{ paddingLeft: `${startSpaces.length * 7.2}px` }}>{it}</Text>
+        return <Text key={ix} style={{ paddingLeft: `${startSpaces.length * 7.2}px` }}>{formatText(it)}</Text>
     })
+}
+
+function formatText(text) {
+    const res = []
+    let bold = false;
+    for (let ix = 0; ix < text.length; ix++) {
+        const letter = text[ix]
+
+        if (text.substring(ix, ix + 3) === '***') {
+            bold = false;
+            ix += 2
+        }
+        else if (text.substring(ix, ix + 2) === '**') {
+            bold = true
+            ix += 1
+        } else {
+            res.push(<span key={ix} style={{ fontWeight: bold ? 700 : 400, fontFamily: 'monospace', fontSize: 12 }}>{letter}</span>)
+        }
+    }
+
+    return res;
 }
 
 function Terminal() {
@@ -65,27 +86,9 @@ function Terminal() {
         const title = topics[it].title;
         const [startSpaces] = /^[ ]*/.exec(title)
 
-        const res = []
-        let bold = false;
-        for (let ix = 0; ix < title.length; ix++) {
-            const letter = title[ix]
-
-            if (title.substring(ix, ix + 3) === '***') {
-                bold = false;
-                ix += 2
-            }
-            else if (title.substring(ix, ix + 2) === '**') {
-                bold = true
-                ix += 1
-            } else {
-                res.push(<span key={ix} style={{ fontWeight: bold ? 700 : 400, fontFamily: 'monospace', fontSize: 12 }}>{letter}</span>)
-            }
-
-        }
-
         return (<div key={ix} style={{ fontSize: 12, display: 'flex', flexDirection: 'row', fontFamily: 'monospace' }}>
-            <div style={{ minWidth: `${startSpaces.length * 7.2}px` }}>{ix}</div>
-            <div style={{ paddingLeft: `${3 * 7.2}px` }}>{res}</div>
+            <div style={{ minWidth: `${3 * 7.2}px` }}>{ix}</div>
+            <div style={{ paddingLeft: `${startSpaces.length * 7.2}px` }}>{formatText(title)}</div>
         </div>)
     })
 
