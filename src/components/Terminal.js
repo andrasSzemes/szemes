@@ -42,10 +42,17 @@ const Input = styled.input`
 `
 
 function textParser(text) {
+    text = text.replace(/<>/g, '•')
     const rows = text.split('\n')
 
     return rows.map((it, ix) => {
         const [startSpaces] = /^[ ]*/.exec(it)
+        if (it.trim().substring(0, 2) === '• ') {
+            return (<Text key={ix} style={{ paddingLeft: `${startSpaces.length * 7.2}px`, display: 'flex' }}>
+                <div style={{ minWidth: '14.4px' }}>•</div>
+                <div>{it.trim().substring(2)}</div>
+            </Text>)
+        }
         return <Text key={ix} style={{ paddingLeft: `${startSpaces.length * 7.2}px` }}>{it}</Text>
     })
 }
